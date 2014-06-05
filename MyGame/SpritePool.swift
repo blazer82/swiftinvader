@@ -57,9 +57,9 @@ class SpritePool {
         return nil
     }
     
-    func addToScene(scene: SKScene) {
+    func each(closure: (sprite: Sprite) -> ()) {
         for sprite in self.pool {
-            scene.addChild(sprite.node)
+            closure(sprite: sprite)
         }
     }
 }

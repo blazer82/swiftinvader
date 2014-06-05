@@ -8,12 +8,13 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     let ship = SKSpriteNode(imageNamed:"Spaceship")
     let rocketPool: SpritePool
     let alienPool: SpritePool
     
     var rocketAction: SKAction?
+    var alienAction: SKAction?
     
     var lastRocketTime: CDouble = 0.0
     var lastAlienTime: CDouble = 0.0
@@ -24,8 +25,16 @@ class GameScene: SKScene {
         
         super.init(coder: coder)
         
-        self.rocketPool.addToScene(self)
-        self.alienPool.addToScene(self)
+        self.rocketPool.each { sprite in
+            self.addChild(sprite.node)
+        }
+        
+        self.alienPool.each { sprite in
+            self.addChild(sprite.node)
+        }
+        
+        self.physicsWorld.gravity = CGVectorMake(0, 0)
+        self.physicsWorld.contactDelegate = self
     }
     
     override func didMoveToView(view: SKView) {
@@ -86,8 +95,18 @@ class GameScene: SKScene {
                 
                 alien.node.position = CGPoint(x:x, y:CGRectGetMaxY(self.frame) - alien.node.size.height)
                 
+                if !self.alienAction {
+                    self.alienAction = SKAction.moveToY(CGRectGetMinY(self.frame), duration: 4.0)
+                }
+                
+                alien.node.runAction(self.alienAction!, completion:{alien.status = .FREE})
+                
                 self.lastAlienTime = currentTime
             }
         }
+    }
+    
+    func didBeginContact(contact: SKPhysicsContact!) {
+        
     }
 }
