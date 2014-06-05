@@ -34,6 +34,7 @@ class SpritePool {
         
         for i in 0..self.poolSize {
             let sprite = Sprite(node:SKSpriteNode(imageNamed: imageName))
+            sprite.node.name = "\(i)"
             if let s = scale {
                 sprite.node.xScale = s
                 sprite.node.yScale = s
@@ -51,6 +52,7 @@ class SpritePool {
             var sprite = self.pool[self.currentIndex]
             if (sprite.status == .FREE) {
                 sprite.status = .BUSY
+                sprite.node.alpha = 1.0
                 return sprite
             }
         }
@@ -61,5 +63,10 @@ class SpritePool {
         for sprite in self.pool {
             closure(sprite: sprite)
         }
+    }
+    
+    func release(node: SKNode) {
+        let sprite = self.pool[node.name.toInt()!]
+        sprite.status = .FREE
     }
 }
