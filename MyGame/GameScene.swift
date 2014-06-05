@@ -28,16 +28,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.rocketPool = SpritePool(size:20, imageName:"rocket", scale:0.2)
         self.alienPool  = SpritePool(size:20, imageName:"alienship", scale:0.5)
         
-        self.fadeAction = SKAction.fadeOutWithDuration(0.2)
+        self.fadeAction = SKAction.fadeOutWithDuration(0.1)
         
         super.init(coder: coder)
-        
-        self.physicsWorld.gravity = CGVectorMake(0, 0)
-        self.physicsWorld.contactDelegate = self
     }
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        self.scaleMode = SKSceneScaleMode.AspectFill
+        self.backgroundColor = SKColor.blackColor()
+        self.physicsWorld.gravity = CGVectorMake(0, 0)
+        self.physicsWorld.contactDelegate = self
+        
+        // setup background image
+        let background = SKSpriteNode(imageNamed:"background")
+        background.xScale = 0.75
+        background.yScale = 0.75
+        background.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+        self.addChild(background)
         
         // setup alien pool
         self.alienPool.each { sprite in
@@ -116,9 +124,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // spawn aliens
-        if self.lastAlienTime < currentTime - 0.2 {
+        if self.lastAlienTime < currentTime - 0.4 {
             if var alien = self.alienPool.next {
-                let x: CGFloat = Float(arc4random()) % CGRectGetMaxX(self.frame)
+                let x: CGFloat = (Float(arc4random()) % CGRectGetMaxX(self.frame)) + alien.node.size.width
                 
                 alien.node.position = CGPoint(x:x, y:CGRectGetMaxY(self.frame) + alien.node.size.height)
                 
@@ -142,7 +150,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func didBeginContact(contact: SKPhysicsContact!) {
         let alienBody = contact.bodyA.categoryBitMask == self.alienCategory ? contact.bodyA : contact.bodyB
-        let rocketBody = contact.bodyA.categoryBitMask == self.rocketCategory ? contact.bodyA : contact.bodyB
+        // let rocketBody = contact.bodyA.categoryBitMask == self.rocketCategory ? contact.bodyA : contact.bodyB
         
         alienBody.node.runAction(self.fadeAction) {
             self.alienPool.release(alienBody.node)
