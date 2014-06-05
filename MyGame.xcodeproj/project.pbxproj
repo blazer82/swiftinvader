@@ -14,6 +14,7 @@
 		2E48C269193E09AB009EC94E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2E48C267193E09AB009EC94E /* Main.storyboard */; };
 		2E48C26B193E09AB009EC94E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2E48C26A193E09AB009EC94E /* Images.xcassets */; };
 		2E48C277193E09AB009EC94E /* MyGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E48C276193E09AB009EC94E /* MyGameTests.swift */; };
+		2E59FA9C193F50540009A3E7 /* SpritePool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E59FA9B193F50540009A3E7 /* SpritePool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		2E48C270193E09AB009EC94E /* MyGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E48C275193E09AB009EC94E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E48C276193E09AB009EC94E /* MyGameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGameTests.swift; sourceTree = "<group>"; };
+		2E59FA9B193F50540009A3E7 /* SpritePool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpritePool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				2E48C267193E09AB009EC94E /* Main.storyboard */,
 				2E48C26A193E09AB009EC94E /* Images.xcassets */,
 				2E48C25D193E09AB009EC94E /* Supporting Files */,
+				2E59FA9B193F50540009A3E7 /* SpritePool.swift */,
 			);
 			path = MyGame;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E59FA9C193F50540009A3E7 /* SpritePool.swift in Sources */,
 				2E48C264193E09AB009EC94E /* GameScene.swift in Sources */,
 				2E48C266193E09AB009EC94E /* GameViewController.swift in Sources */,
 				2E48C260193E09AB009EC94E /* AppDelegate.swift in Sources */,
@@ -405,6 +409,7 @@
 				2E48C27C193E09AB009EC94E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2E48C27D193E09AB009EC94E /* Build configuration list for PBXNativeTarget "MyGameTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +418,7 @@
 				2E48C27F193E09AB009EC94E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
