@@ -24,8 +24,8 @@ class Sprite {
 }
 
 class SpritePool {
-    var poolSize: Int
-    var pool: Array<Sprite>
+    let poolSize: Int
+    let pool: Array<Sprite>
     var currentIndex = 0
     
     init(size: Int, imageName: String, scale: CGFloat?) {
@@ -67,6 +67,8 @@ class SpritePool {
     
     func release(node: SKNode) {
         let sprite = self.pool[node.name.toInt()!]
+        sprite.node.removeAllActions()
+        sprite.node.removeFromParent()
         sprite.status = .FREE
     }
 }

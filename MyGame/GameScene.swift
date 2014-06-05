@@ -13,6 +13,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let rocketPool: SpritePool
     let alienPool: SpritePool
     
+    let shipCategory: UInt32   = 0x1 << 0
+    let rocketCategory: UInt32 = 0x1 << 1
+    let alienCategory: UInt32  = 0x1 << 2
+    
     var rocketAction: SKAction?
     var alienAction: SKAction?
     var fadeAction: SKAction
@@ -35,26 +39,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
-        let shipCategory: UInt32   = 0x1 << 0
-        let rocketCategory: UInt32 = 0x1 << 1
-        let alienCategory: UInt32  = 0x1 << 2
-        
         // setup alien pool
         self.alienPool.each { sprite in
             sprite.node.physicsBody = SKPhysicsBody(rectangleOfSize: sprite.node.size)
-            sprite.node.physicsBody.categoryBitMask = alienCategory
+            sprite.node.physicsBody.categoryBitMask = self.alienCategory
             sprite.node.physicsBody.collisionBitMask = 0x0
             sprite.node.physicsBody.contactTestBitMask = 0x0
-            self.addChild(sprite.node)
         }
         
         // setup rocket pool
         self.rocketPool.each { sprite in
             sprite.node.physicsBody = SKPhysicsBody(rectangleOfSize: sprite.node.size)
-            sprite.node.physicsBody.categoryBitMask = rocketCategory
+            sprite.node.physicsBody.categoryBitMask = self.rocketCategory
             sprite.node.physicsBody.collisionBitMask = 0x0
-            sprite.node.physicsBody.contactTestBitMask = alienCategory
-            self.addChild(sprite.node)
+            sprite.node.physicsBody.contactTestBitMask = self.alienCategory
         }
         
         // setup ship
@@ -104,7 +102,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.rocketAction = SKAction.moveToY(CGRectGetMaxY(self.frame) + rocket.node.size.height, duration: 0.8)
                 }
             
-                rocket.node.runAction(self.rocketAction!, completion:{rocket.status = .FREE})
+                rocket.node.runAction(self.rocketAction!) {
+                    self.rocketPool.release(rocket.node)
+                }
+                
+                self.addChild(rocket.node)
             
                 self.lastRocketTime = currentTime
             }
@@ -114,17 +116,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // spawn aliens
-        if self.lastAlienTime < currentTime - 1 {
+        if self.lastAlienTime < currentTime - 0.2 {
             if var alien = self.alienPool.next {
                 let x: CGFloat = Float(arc4random()) % CGRectGetMaxX(self.frame)
                 
-                alien.node.position = CGPoint(x:x, y:CGRectGetMaxY(self.frame) - alien.node.size.height)
+                alien.node.position = CGPoint(x:x, y:CGRectGetMaxY(self.frame) + alien.node.size.height)
                 
                 if !self.alienAction {
-                    self.alienAction = SKAction.moveToY(CGRectGetMinY(self.frame), duration: 4.0)
+                    self.alienAction = SKAction.moveToY(CGRectGetMinY(self.frame), duration: 2.0)
                 }
                 
-                alien.node.runAction(self.alienAction!, completion:{alien.status = .FREE})
+                alien.node.runAction(self.alienAction!) {
+                    self.alienPool.release(alien.node)
+                }
+                
+                self.addChild(alien.node)
                 
                 self.lastAlienTime = currentTime
             }
@@ -135,13 +141,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBeginContact(contact: SKPhysicsContact!) {
-        let alienBody = contact.bodyA
-        let rocketBody = contact.bodyB
+        let alienBody = contact.bodyA.categoryBitMask == self.alienCategory ? contact.bodyA : contact.bodyB
+        let rocketBody = contact.bodyA.categoryBitMask == self.rocketCategory ? contact.bodyA : contact.bodyB
         
-        alienBody.node.removeAllActions()
-        alienBody.node.runAction(self.fadeAction, completion:{self.alienPool.release(alienBody.node)})
+        alienBody.node.runAction(self.fadeAction) {
+            self.alienPool.release(alienBody.node)
+        }
         
-        rocketBody.node.removeAllActions()
-        self.rocketPool.release(rocketBody.node)
+        // self.rocketPool.release(rocketBody.node) let's keep the rocket
     }
 }
